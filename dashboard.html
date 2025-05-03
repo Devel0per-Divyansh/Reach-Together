@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Reach Together</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <h1>Reach Together</h1>
+                </div>
+                <div class="user-menu">
+                    <div class="user-info">
+                        <span id="userNameDisplay">John Doe</span>
+                        <div class="user-avatar" id="userAvatar">JD</div>
+                    </div>
+                    <button id="logoutBtn" class="secondary-btn">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <div class="container">
+            <div class="dashboard-welcome">
+                <h1>Welcome, <span id="welcomeName">John</span>!</h1>
+                <p>Find colleagues traveling on the same route or share transportation.</p>
+            </div>
+            
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="my-journeys">My Journeys</button>
+                <button class="tab-btn" data-tab="add-journey">Add Journey</button>
+                <button class="tab-btn" data-tab="matches">Matches</button>
+                <button class="tab-btn" data-tab="messages">Messages</button>
+            </div>
+            
+            <div class="tab-content-container">
+                <!-- My Journeys Tab -->
+                <div class="tab-content active" id="my-journeys">
+                    <div class="journey-list" id="journeyList">
+                        <div class="empty-state">
+                            <i class="fas fa-route"></i>
+                            <h3>No journeys added yet</h3>
+                            <p>Add your first journey to find travel companions</p>
+                            <button class="primary-btn" id="addFirstJourneyBtn">Add Journey</button>
+                        </div>
+                        <!-- Journey cards will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Add Journey Tab -->
+                <div class="tab-content" id="add-journey">
+                    <h2>Add New Journey</h2>
+                    <form id="journeyForm">
+                        <div class="form-group">
+                            <label for="journeyType">Journey Type</label>
+                            <select id="journeyType" required>
+                                <option value="train">Train</option>
+                                <option value="bus">Bus</option>
+                                <option value="flight">Flight</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="pnrGroup">
+                            <label for="pnrNumber">PNR Number</label>
+                            <input type="text" id="pnrNumber" placeholder="Enter your PNR">
+                            <small>For train journeys, this helps find exact matches</small>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fromLocation">From</label>
+                                <input type="text" id="fromLocation" required placeholder="Departure location">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="toLocation">To</label>
+                                <input type="text" id="toLocation" required placeholder="Arrival location">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="departureDate">Departure Date</label>
+                                <input type="date" id="departureDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="departureTime">Departure Time</label>
+                                <input type="time" id="departureTime" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="travelPreferences">Travel Preferences</label>
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="shareAuto"> 
+                                    Willing to share auto/cab to/from station
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="womenOnly"> 
+                                    Prefer women-only travel companion
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="luggageHelp"> 
+                                    Need help with luggage
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="additionalNotes">Additional Notes</label>
+                            <textarea id="additionalNotes" rows="3" placeholder="Add any additional information"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="primary-btn">Add Journey</button>
+                    </form>
+                </div>
+                
+                <!-- Matches Tab -->
+                <div class="tab-content" id="matches">
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Journey Type</label>
+                            <select id="matchFilterType">
+                                <option value="all">All</option>
+                                <option value="train">Train</option>
+                                <option value="bus">Bus</option>
+                                <option value="flight">Flight</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By</label>
+                            <select id="matchSortBy">
+                                <option value="date">Date</option>
+                                <option value="match">Match %</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="matches-list" id="matchesList">
+                        <div class="empty-state">
+                            <i class="fas fa-user-friends"></i>
+                            <h3>No matches found</h3>
+                            <p>Add a journey first to find potential matches</p>
+                        </div>
+                        <!-- Match cards will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Messages Tab -->
+                <div class="tab-content" id="messages">
+                    <div class="messages-container">
+                        <div class="contacts-list">
+                            <div class="contacts-header">
+                                <h3>Contacts</h3>
+                                <div class="search-box">
+                                    <input type="text" placeholder="Search contacts">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="contacts" id="contactsList">
+                                <div class="empty-state">
+                                    <i class="fas fa-envelope"></i>
+                                    <h3>No contacts yet</h3>
+                                    <p>Your matched contacts will appear here</p>
+                                </div>
+                                <!-- Contact cards will be added here dynamically -->
+                            </div>
+                        </div>
+                        
+                        <div class="chat-area">
+                            <div class="chat-header">
+                                <h3>Select a contact to start chatting</h3>
+                            </div>
+                            
+                            <div class="chat-messages" id="chatMessages">
+                                <!-- Messages will be added here dynamically -->
+                            </div>
+                            
+                            <div class="chat-input">
+                                <textarea placeholder="Type a message..." id="messageInput"></textarea>
+                                <button id="sendMessageBtn" class="primary-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Reach Together</h2>
+                <p>Connect. Travel. Together.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#my-journeys">My Journeys</a></li>
+                    <li><a href="#add-journey">Add Journey</a></li>
+                    <li><a href="#matches">Matches</a></li>
+                    <li><a href="#messages">Messages</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> support@reachtogether.com</p>
+                <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Reach Together. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

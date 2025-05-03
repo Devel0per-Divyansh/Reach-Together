@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reach Together - Find Travel Companions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Reach Together</h1>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#login-section" class="login-btn">Login</a></li>
+                <li><a href="#signup-section" class="signup-btn">Sign Up</a></li>
+            </ul>
+            <div class="burger" id="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Never Travel Alone</h1>
+                <h2>Connect with colleagues on the same journey</h2>
+                <p>Find companions from your organization traveling on the same train or route</p>
+                <div class="hero-buttons">
+                    <a href="#signup-section" class="primary-btn">Get Started</a>
+                    <a href="#how-it-works" class="secondary-btn">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="WhatsApp Image 2025-04-29 at 11.39.32 AM.jpeg" alt="People traveling together">
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Sign Up</h3>
+                    <p>Create an account using your organization email</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>Enter Your PNR</h3>
+                    <p>Input your train ticket PNR or route details</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Find Matches</h3>
+                    <p>Discover colleagues traveling on the same route</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Connect</h3>
+                    <p>Reach out and plan to travel together safely</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Travel Safely</h3>
+                    <p>Enhanced safety when traveling with trusted colleagues, especially beneficial for solo female travelers</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-car-side"></i>
+                    </div>
+                    <h3>Share Auto/Cab</h3>
+                    <p>Split costs by sharing transportation to and from stations with colleagues</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <h3>Verified Users</h3>
+                    <p>Only colleagues with verified organization emails can join, ensuring trusted connections</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Timing Match</h3>
+                    <p>Connect with travelers on similar schedules (within 1 hour difference)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="login-section" class="auth-section">
+            <div class="auth-container">
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Organization Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Login</button>
+                </form>
+                <p class="auth-redirect">Don't have an account? <a href="#signup-section">Sign up</a></p>
+            </div>
+        </section>
+
+        <section id="signup-section" class="auth-section">
+            <div class="auth-container">
+                <h2>Sign Up</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Organization Email</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Sign Up</button>
+                </form>
+                <p class="auth-redirect">Already have an account? <a href="#login-section">Login</a></p>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>About Reach Together</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Reach Together was created to solve the common problem of solo travel among colleagues. Our platform aims to make journeys safer, more economical, and more enjoyable by connecting people from the same organization who are traveling on similar routes.</p>
+                    <p>Whether you're concerned about safety during late-night travel, looking to share transportation costs, or simply want company during a long journey, Reach Together helps you find the perfect travel companion from your own trusted organization.</p>
+                </div>
+                <div class="about-image">
+                    <img src="WhatsApp Image 2025-04-29 at 11.39.32 AM.jpeg" alt="About Reach Together">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Reach Together</h2>
+                <p>Connect. Travel. Together.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> support@reachtogether.com</p>
+                <p><i class="fas fa-phone"></i> +91 98765 43***</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Reach Together. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
