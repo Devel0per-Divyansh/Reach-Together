@@ -3,9 +3,55 @@ const burger = document.getElementById('burger');
 const navLinks = document.getElementById('navLinks');
 const loginForm = document.getElementById('loginForm');
 const signupForm = document.getElementById('signupForm');
+const themeToggle = document.getElementById('themeToggle');
+
+// Dark Mode Toggle
+if (themeToggle) {
+    const themeIcon = themeToggle.querySelector('i');
+    
+    // Check for saved theme preference
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+    }
+
+    // Swap images that have data-light/data-dark attributes
+    function swapThemeImages() {
+        document.querySelectorAll('img[data-light][data-dark]').forEach(img => {
+            const light = img.getAttribute('data-light');
+            const dark = img.getAttribute('data-dark');
+            if (document.body.classList.contains('dark-mode')) {
+                if (dark) img.src = dark;
+            } else {
+                if (light) img.src = light;
+            }
+        });
+    }
+
+    // Initial swap based on loaded theme
+    swapThemeImages();
+
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        // Swap images when theme changes
+        swapThemeImages();
+        
+        if (document.body.classList.contains('dark-mode')) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+}
 
 // Variables for organization domain verification
-const allowedDomains = ['nitj.ac.in', 'company.com', 'organization.in']; // Add your organization domains
+const allowedDomains = ['nitj.ac.in'];
 
 // Mobile Navigation Toggle
 if (burger) {
@@ -50,11 +96,41 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         
         if (targetElement) {
             window.scrollTo({
-                top: targetElement.offsetTop - 70, // Adjust for header height
+                top: targetElement.offsetTop - 70,
                 behavior: 'smooth'
             });
         }
     });
+});
+
+// Header scroll effect
+const header = document.querySelector('header');
+if (header) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+}
+
+// Scroll animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animated');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
 });
 
 // Function to check if email domain is allowed
@@ -74,19 +150,20 @@ function showNotification(message, isSuccess = true) {
     notification.style.position = 'fixed';
     notification.style.top = '20px';
     notification.style.right = '20px';
-    notification.style.padding = '15px 20px';
-    notification.style.borderRadius = '8px';
+    notification.style.padding = '1rem 1.5rem';
+    notification.style.borderRadius = '15px';
     notification.style.color = '#fff';
-    notification.style.fontWeight = '500';
-    notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
-    notification.style.zIndex = '1001';
+    notification.style.fontWeight = '600';
+    notification.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.2)';
+    notification.style.zIndex = '10000';
     notification.style.opacity = '0';
-    notification.style.transition = 'opacity 0.3s ease';
+    notification.style.transition = 'all 0.3s ease';
+    notification.style.fontFamily = 'Poppins, sans-serif';
     
     if (isSuccess) {
-        notification.style.backgroundColor = '#2ecc71';
+        notification.style.background = 'linear-gradient(135deg, #10b981, #059669)';
     } else {
-        notification.style.backgroundColor = '#e74c3c';
+        notification.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
     }
     
     // Add to DOM
@@ -95,19 +172,21 @@ function showNotification(message, isSuccess = true) {
     // Show notification
     setTimeout(() => {
         notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
     }, 10);
     
     // Remove after 4 seconds
     setTimeout(() => {
         notification.style.opacity = '0';
+        notification.style.transform = 'translateX(400px)';
         setTimeout(() => {
             document.body.removeChild(notification);
         }, 300);
     }, 4000);
 }
 
-// Mock database for users and journeys (in a real application, this would be a server-side database)
-const users = [];
+// Mock database for users and journeys
+const users = JSON.parse(localStorage.getItem('users')) || [];
 const journeys = [];
 
 // Signup Form Handling
@@ -144,9 +223,10 @@ if (signupForm) {
             id: Date.now().toString(),
             name,
             email,
-            password // In a real app, this would be hashed
+            password
         });
         
+        localStorage.setItem('users', JSON.stringify(users));
         showNotification('Account created successfully! Please login.');
         
         // Reset form
@@ -156,5 +236,44 @@ if (signupForm) {
         setTimeout(() => {
             document.querySelector('a[href="#login-section"]').click();
         }, 1500);
+    });
+}
+
+// Login Form Handling
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        // Validate email is from organization
+        if (!isOrganizationEmail(email)) {
+            showNotification('Please use your organization email address', false);
+            return;
+        }
+        
+        // Mock authentication
+        const user = users.find(user => user.email === email && user.password === password);
+        
+        if (user) {
+            // Store user info in localStorage
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                avatar: user.name.split(' ').map(n => n[0]).join('')
+            }));
+            
+            // Show success notification
+            showNotification('Login successful! Redirecting to dashboard...');
+            
+            // Redirect to dashboard after a short delay
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        } else {
+            showNotification('Invalid email or password', false);
+        }
     });
 }
