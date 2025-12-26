@@ -53,6 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMockData();
 });
 
+// Apply saved theme (in case toggle exists on index.html only)
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    } catch (e) {
+        // ignore if localStorage not available
+    }
+});
+
 // Setup tab navigation
 function setupTabs() {
     tabButtons.forEach(button => {
@@ -124,6 +138,14 @@ function loadUserData(user) {
     displayContacts();
 }
 
+// Save all app data to localStorage
+function saveAll() {
+    localStorage.setItem('journeys', JSON.stringify(mockJourneys));
+    localStorage.setItem('matches', JSON.stringify(mockMatches));
+    localStorage.setItem('contacts', JSON.stringify(mockContacts));
+    localStorage.setItem('messages', JSON.stringify(mockMessages));
+}
+
 // Setup form handlers
 function setupFormHandlers() {
     // Add journey form submission
@@ -191,19 +213,17 @@ function handleJourneyFormSubmit(e) {
     
     // Add journey to storage
     mockJourneys.push(journeyData);
-    localStorage.setItem('journeys', JSON.stringify(mockJourneys));
-    
-    // Display journeys
+    saveAll();
+
+    // Display journeys and find matches
     displayJourneys();
-    
-    // Find matches
     findMatches(journeyData);
-    
+
     // Reset form
     journeyForm.reset();
-    
+
     // Show success message
-    alert('Journey added successfully!');
+    showNotification('Journey added successfully!', 'success');
     
     // Switch to my journeys tab
     tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -299,7 +319,12 @@ function formatDate(dateString) {
 
 // Format time
 function formatTime(timeString) {
+    if (!timeString) return '';
     const options = { hour: '2-digit', minute: '2-digit' };
+    // If an ISO timestamp was passed
+    if (timeString.includes('T')) {
+        return new Date(timeString).toLocaleTimeString('en-US', options);
+    }
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', options);
 }
 
@@ -405,8 +430,8 @@ function handleEditJourney(journeyId) {
         journeyForm.removeEventListener('submit', updateHandler);
         journeyForm.addEventListener('submit', handleJourneyFormSubmit);
         
-        // Show success message
-        alert('Journey updated successfully!');
+            // Show success message
+            showNotification('Journey updated successfully!', 'success');
         
         // Switch to my journeys tab
         tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -435,7 +460,7 @@ function handleDeleteJourney(journeyId) {
     findAllMatches();
     
     // Show success message
-    alert('Journey deleted successfully!');
+    showNotification('Journey deleted successfully!', 'success');
 }
 
 // Find matches based on journeys
@@ -653,7 +678,7 @@ function handleConnectMatch(matchId) {
     // Check if already connected
     const isAlreadyConnected = mockContacts.some(c => c.matchId === matchId);
     if (isAlreadyConnected) {
-        alert('You are already connected with this traveler!');
+        showNotification('You are already connected with this traveler!', 'info');
         return;
     }
     
@@ -682,7 +707,7 @@ function handleConnectMatch(matchId) {
     displayContacts();
     
     // Show success message
-    alert('Connected successfully! You can now message this traveler.');
+    showNotification('Connected successfully! You can now message this traveler.', 'success');
     
     // Switch to messages tab
     tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -857,7 +882,7 @@ function handleSendMessage() {
     
     // Check if there is an active contact
     if (!activeContactId) {
-        alert('Please select a contact to message');
+        showChatNotice('Please select a contact to message', 'info');
         return;
     }
     
@@ -892,6 +917,49 @@ function handleSendMessage() {
     }
 }
 
+// Show an inline notice inside the chat messages area (instead of global toast)
+function showChatNotice(message, type = 'info') {
+    if (!chatMessages) return;
+
+    // Remove existing chat notices to avoid duplicates
+    chatMessages.querySelectorAll('.chat-notice').forEach(n => n.remove());
+
+    const notice = document.createElement('div');
+    notice.className = `chat-notice ${type}`;
+    notice.textContent = message;
+
+    // Basic inline styling to match chat area
+    notice.style.display = 'inline-block';
+    notice.style.padding = '0.6rem 1rem';
+    notice.style.margin = '0.5rem 0';
+    notice.style.borderRadius = '12px';
+    notice.style.fontWeight = '600';
+    notice.style.boxShadow = '0 6px 18px rgba(2,6,23,0.25)';
+    notice.style.maxWidth = '100%';
+    notice.style.lineHeight = '1.2';
+
+    if (type === 'info') {
+        notice.style.background = 'linear-gradient(135deg, #0f172a, #111827)';
+        notice.style.color = '#e6eef8';
+    } else if (type === 'success') {
+        notice.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        notice.style.color = '#fff';
+    } else if (type === 'error' || type === 'danger') {
+        notice.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        notice.style.color = '#fff';
+    }
+
+    // Append notice into chatMessages so it appears inside the chat box
+    chatMessages.appendChild(notice);
+    // Scroll to show notice
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        if (notice && notice.parentNode) notice.parentNode.removeChild(notice);
+    }, 4000);
+}
+
 // Setup filter handlers
 function setupFilterHandlers() {
     // Match filter type change
@@ -909,19 +977,25 @@ function setupFilterHandlers() {
 function handleLogout() {
     // Clear local storage
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('journeys');
+    localStorage.removeItem('matches');
+    localStorage.removeItem('contacts');
+    localStorage.removeItem('messages');
     
-    // Redirect to login page
-    window.location.href = 'login.html';
-    
-    // For demo purposes, just reload the page
-    window.location.reload();
+    // Redirect to main page
+    window.location.href = 'index.html';
 }
-
 // Setup mock data for development
 function setupMockData() {
     // Check if there are any journeys
     if (mockJourneys.length === 0) {
-        // Add some mock journeys
+        // Add some mock journeys with future dates (relative to today)
+        const today = new Date();
+        const d1 = new Date(today); d1.setDate(today.getDate() + 3);
+        const d2 = new Date(today); d2.setDate(today.getDate() + 7);
+        const d3 = new Date(today); d3.setDate(today.getDate() + 5);
+        const fmt = d => d.toISOString().split('T')[0];
+
         const mockJourneyData = [
             {
                 id: 'journey1',
@@ -930,7 +1004,7 @@ function setupMockData() {
                 pnr: '1234567890',
                 from: 'Mumbai',
                 to: 'Delhi',
-                departureDate: '2023-10-15',
+                departureDate: fmt(d1),
                 departureTime: '08:30',
                 preferences: {
                     shareAuto: true,
@@ -947,7 +1021,7 @@ function setupMockData() {
                 pnr: null,
                 from: 'Delhi',
                 to: 'Bangalore',
-                departureDate: '2023-10-20',
+                departureDate: fmt(d2),
                 departureTime: '14:00',
                 preferences: {
                     shareAuto: true,
@@ -964,7 +1038,7 @@ function setupMockData() {
                 pnr: null,
                 from: 'Mumbai',
                 to: 'Pune',
-                departureDate: '2023-10-18',
+                departureDate: fmt(d3),
                 departureTime: '10:15',
                 preferences: {
                     shareAuto: false,
@@ -975,10 +1049,10 @@ function setupMockData() {
                 createdAt: new Date().toISOString()
             }
         ];
-        
+
         // Add mock journeys
         mockJourneys.push(...mockJourneyData);
-        localStorage.setItem('journeys', JSON.stringify(mockJourneys));
+        saveAll();
     }
 }
 
@@ -1137,3 +1211,4 @@ function initApp() {
 
 // Call init on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', initApp);
+
