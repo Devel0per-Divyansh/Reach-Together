@@ -94,6 +94,12 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         const targetId = this.getAttribute('href');
         const targetElement = document.querySelector(targetId);
         
+        // Update active state for top navigation links so the underline moves
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        if (this.closest('.nav-links')) {
+            this.classList.add('active');
+        }
+        
         if (targetElement) {
             window.scrollTo({
                 top: targetElement.offsetTop - 70,
@@ -102,6 +108,35 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Scrollspy using IntersectionObserver for reliable active link updates
+(() => {
+    const navAnchors = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
+    const observedSections = navAnchors
+        .map(a => a.getAttribute('href'))
+        .filter(h => h && h.startsWith('#'))
+        .map(id => document.querySelector(id))
+        .filter(Boolean);
+
+    if (observedSections.length === 0) return;
+
+    const ioOptions = {
+        root: null,
+        rootMargin: '-40% 0px -50% 0px', // trigger when section is near middle of viewport
+        threshold: 0
+    };
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = `#${entry.target.id}`;
+                navAnchors.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+            }
+        });
+    }, ioOptions);
+
+    observedSections.forEach(sec => io.observe(sec));
+})();
 
 // Header scroll effect
 const header = document.querySelector('header');
